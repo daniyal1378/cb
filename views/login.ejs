@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="bootstrap/jquery.js"></script>
+    <link rel="stylesheet" href="plugin/bootstrap.min.css">
+    <script src="plugin/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="style/signup.css"/>
+    <script>
+        $(document).ready(function () {
+            $('#loginform').on('submit',function (e) {
+                const username = $('#username').val();
+                const password = $('#password').val();
+                if(username === '' || password === '')
+                {
+                    e.preventDefault();
+                    $('#warning').empty().text('تمامی فیلد ها را پر کنید')
+                }
+            })
+        })
+    </script>
+</head>
+
+<body>
+<div class="container-fluid">
+    <%- include('./topbar') %>
+</div>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-4"></div>
+        <div class="col-sm-4 " style="text-align:center;">
+            <div class="color-border">
+                <div class="form-container">
+                    <img src="logotype.png"/><br>
+                    <span style="font-size: 15px;color: crimson;" id="warning">
+                    <% if (err) { %>
+                    نام کاربری  یا رمز عبور اشتباه است
+                    <% } %></span>
+                    <form action="./dologin" method="post" id="loginform">
+                        <label for="username">نام کاربری:</label>
+                        <input type="text" name="username" id="username"/>
+                        <label for="password">رمز عبور:</label>
+                        <input type="password" name="password" id="password"/>
+                        <button type="submit" class="send">ورود</button><br>
+                        <a href="signup">حساب کاربری ندارم</a><br>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-4"></div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title> <%= title %> </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="/bootstrap/jquery.js"></script>
+    <link rel="stylesheet" href="/plugin/bootstrap.min.css">
+    <script src="/plugin/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="/style/blog.css" type="text/css"/>
+    <link rel="stylesheet" href="/style/topbar.css" type="text/css"/>
+</head>
+<body>
+<div class="container-fliud">
+    <%- include('./topbar') %></div>
+<div class="container">
+    <div class="row" style="padding-top: 100px;">
+        <div class="col-sm-12" style="text-align: center">
+            <img src="<%= img %>" class="full-img"/>
+            <div class="full-post">
+                <div class="full-title">
+                    <h1><%= title %></h1>
+                </div>
+                <div class="full-content">
+                    <%- content %>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>تصویر پروفایل</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="bootstrap/jquery.js"></script>
+    <link rel="stylesheet" href="plugin/bootstrap.min.css">
+    <script src="plugin/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="style/signupimg.css">
+    <link rel="stylesheet" href="style/home.css">
+    <style>
+        .msg
+        {
+            font-size: 22px;
+            color: #0e0e0e;
+        }
+    </style>
+    <script>
+        defaultavatar = false;
+        avatar = 1;
+        function avatarchoose(id) {
+            $('.default-avatar-container img').removeClass('mychoice');
+            $('#'+id).addClass('mychoice');
+            defaultavatar = true;
+            avatar = id;
+        }
+        function checksubmit(e) {
+            input = document.getElementById('userimg').files[0];
+            if(input) {
+                        path = input.name.split('.').pop().toLowerCase();
+                        if (['png', 'jpg', 'jpeg', 'gif', 'bmp', 'svg'].indexOf(path) !== -1)
+                        {
+                            return true;
+                        }
+                        else
+                        {
+                            alert('تنها عکس مجاز است!!!')
+                        }
+                    }
+            else if(defaultavatar)
+            {
+                e.preventDefault();
+                $.post('/useravatarsave',{avatar: avatar},function (data) {
+                    if (data === 'true')
+                    {
+                        $('.img-choose-container').empty().html('<div class="msg">تمام شد ! در حال انتقال به چت روم</div><div>اگه بصورت خودکار منتقل نشدید <a href="login">کلیک کنید</a> </div>');
+                        window.location = 'login';
+                    }else if(data === 'false'){
+                        $('.img-choose-container').empty().html('<div class="msg">مشکلی پیش آمده دوباره از پنل کاربری امتحان کنید</div>');
+                        window.location = 'login';
+                    }
+                })
+                return false;
+            }
+            else
+            {
+                return false;
+            }
+
+        }
+    </script>
+</head>
+
+<body>
+<div class="container-fluid">
+    <%- include('./topbar') %>
+</div>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-4"></div>
+        <div class="col-sm-4 img-choose-container">
+            <div class="imgtitle">عکس پروفایل خود را انتخاب کنید</div>
+            <form enctype="multipart/form-data" id="profileimg" method="post" onsubmit="return checksubmit(event)" action="userimgupload">
+                <label for="userimg">
+                    <div id="fileinputbut" class="fileinputbut">بارگذاری تصویر</div>
+                </label>
+                <input multiple="multiple" type="file" name="userimg" id="userimg">
+
+            <div class="default-avatar-container">
+            </div>
+
+
+            <script>
+                gender = <%= gender %>
+                counter = 34;
+                for(i=1;i<=counter;i++)
+                {
+                    $(".default-avatar-container").append(' <img id="'+i+'" onclick="avatarchoose('+i+')" class="gender'+gender+'" src="avatars/'+gender+'/avatar%20('+i+').png"/>')
+                }
+            </script>
+
+            <input type="submit" value="ذخیره" class="fileinputbut">
+            </form>
+        </div>
+        <div class="col-sm-4"></div>
+    </div>
+</div>
+
+</body>
+</html>

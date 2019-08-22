@@ -1,0 +1,15 @@
+<html>
+    <head>
+        <script src="//cdn.ckeditor.com/4.12.1/full/ckeditor.js"></script>    </head>
+<body>
+<form action="/publishpost" method="post">
+    <input type="text" name="title"><br/>
+    <input type="text" name="img"><br/>
+    <textarea id="" cols="30" rows="10" name="content"></textarea><br/>
+    <input type="submit">
+    <script>
+        CKEDITOR.replace('content');
+    </script>
+</form>
+</body>
+</html>

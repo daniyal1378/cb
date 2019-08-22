@@ -1,0 +1,14 @@
+<div class="row top-bar">
+    <img src="/logotype.png" class="logo"/>
+    <ul>
+        <li>وبلاگ</li>
+        <li>تبلیغات</li>
+        <li>قوانین</li>
+        <a href="login"><li>ورود</li></a>
+    </ul>
+    <% if(daniusername) { %>
+    <a href="signup"><div class="signup"> <%= daniusername %></div></a>
+    <% } else {%>
+    <a href="signup"><div class="signup">وارد شوید</div></a>
+    <% } %>
+</div>

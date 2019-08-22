@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8">
+    <script src="bootstrap/jquery.js"></script>
+    <link rel="icon" type="image/png" href="hichat.icon.png"/>
+    <link rel="stylesheet" href="plugin/bootstrap.min.css">
+    <link rel="stylesheet" href="style/main1.css"/>
+    <script src="plugin/bootstrap.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+
+    <!-- Icon -->
+</head>
+<body>
+<div id="emojicanceler"></div>
+<div style="position: fixed;height: 100%;width: 40px;" id="metr"></div>
+<div style="position: fixed;width: 100%;" id="hmetr"></div>
+<script>h=$("#metr").height()</script>
+<input type="hidden" value="<%= daniusername %>" id="myusername">
+<div class="container-fluid" id="chatbook">
+    <!-- top bar -->
+    <div class="row topbar">
+
+        <div class="col-sm-5 col-xs-4 brdd height40" >
+            <ul class="menu" id="nav-public-op">
+                <li>تبلیغات</li>
+                <li>وبلاگ</li>
+                <li>شکایت</li>
+            </ul>
+            <div class="menu-list" id="onlineusersbut">
+                <img src="users.png"/>
+            </div>
+            <div class="menu-list" id="msgbodybut" style="display: none;">
+                <img src="chat.png"/>
+            </div>
+            <div class="menu-list" id="roomsbut" style="margin-left: 15px;">
+                <img src="rooms.png"/>
+            </div>
+
+        </div>
+        <a href="/"><div class="col-sm-2 col-xs-4 logotop">
+            <img src="chatbook1.PNG"/>
+        </div></a>
+        <div id="rightcolbut"></div>
+        <div class="col-sm-5 col-xs-4 brdd height40" style="text-align: right">
+            <div class="topprofile">
+                <div id="profile-menu-but">
+                    <div class="profilecontainer" id="topprofileimg">
+                        <img src="profile.png" class="imgprofile"/>
+                    </div>
+                    <span class="profilename" id="topprofilename">دانیال</span><span style="color:white;font-size: 26px;vertical-align:middle;margin-right:5px" id="topprofilearrow">&dtrif;</span>
+                </div>
+
+                <div class="profile-menu">
+                    <div id="profilemanageropen" onclick="profiledatainsert()">
+                        <img src="user-profile.png">
+                        <span>پروفایل</span>
+                    </div>
+                    <div id="securityopen">
+                        <img src="security.png">
+                        <span>امنیت</span>
+                    </div>
+                    <div>
+                        <img src="appearance.png">
+                        <span>ظاهر</span>
+                    </div>
+                    <div>
+                        <img src="premium.png">
+                        <span>ارتقا حساب</span>
+                    </div>
+                    <hr>
+                    <div>
+                        <img src="power-button-off.png">
+                        <span>خروج</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="row" id="mainbody">
+        <div class="col-sm-3" id="left-col">
+            <div class="left-abs">
+                <div class="search-container">
+                    <input oninput="searchuser()" id="searchbox" type="text" placeholder="دنبال کسی هستی؟؟">
+                </div>
+                <div class="filter-container">
+                    <select id="filtercontainer">
+                        <option value="data-time">زمان ورود</option>
+                        <option value="data-point">امتیاز</option>
+                        <option value="data-gender">جنسیت</option>
+                        <option value="data-rank">رتبه</option>
+                    </select>
+                    <div>
+                        <span id="onlinecounter"></span>
+                    </div>
+                    <div>
+                    </div>
+                </div>
+                <div class="user-header-container">
+                    <div class="active">کاربران</div>
+                </div>
+            </div>
+            <div class="users-container">
+            </div>
+        </div>
+        <!-- the msg body -->
+        <div class="col-sm-6 brdd" id="msgbody">
+            <div class="msgcont" id="public">
+                <div class="insidechatinfocontainer">
+                    <div class="insidechatinfo">اتاق عمومی</div>
+                </div>
+            </div>
+            <!-- chat write box -->
+            <div class="chat-nav">
+                <div id="bar">
+
+                </div>
+                <div class="imguploadcontainer">
+                    <span id="imgname"></span>
+                    <div class="x" onclick="imguploadcancel()">x</div>
+                </div>
+                <div class="container-fluid" style="padding: 0;margin: 0;height: 40px">
+                    <div class="row" style="height: 40px;position: relative;padding: 0;margin: 0;">
+                        <div class="col-sm-4" style="padding: 0;margin: 0 ;height: 40px;">
+                            <div class="chat-item-container">
+                                <div class="icon-container" id="send">
+                                    <img src="icon/send1.png" id="paperplane"/>
+                                </div>
+                                <div class="icon-container" id="em" onclick="msgpos(document.getElementById('msg'))" >
+                                    <img src="icon/emoji.png"/>
+                                    <div id="emojicontainer">
+
+                                    </div>
+                                </div>
+                                <div class="icon-container" id="uploadigbut">
+                                    <form id="chatimgform" enctype="multipart/form-data" action="/chatimgupload" method="post">
+                                        <input id="chatimg" multiple="multiple" name="chatimg" onchange="imguploader()" type="file" style="width: 0;height: 0;"/>
+                                        <label for="chatimg"><img src="icon/picture.png"/></label>
+                                    </form>
+                                </div>
+                                <div class="icon-container" id="asl">
+                                    <img src="icon/id-card.png"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-8" style="height:40px;padding: 0;overflow-y: hidden;">
+                            <!--    <textarea class="input-chat" placeholder="اینجا بنویس . . ." id="msg"> </textarea>-->
+                            <input class="input-chat" id="msg">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3" id="right-col">
+            <div id="profile-container">
+                <img src="avatars/1/avatar%20(5).png" class="profileimg"/>
+                <div class="name">
+                    دانیال رسولی
+                    <img src="ranks/slide11.png" class="pointrank"/>
+                </div>
+                <div class="details">
+                    <div class="bio">
+                        برنامه نویس کامپیوتر ، عاشق زبانب برنامه نویسی نود هستم
+                        خودآموخته و طراح اصلی چت بوک
+                    </div>
+                    <div class="extracontainer">
+                        <div class="extra">
+                            <img src="singleman.png">
+                            مجرد
+                        </div>
+                        <div class="extra">
+                            <img src="house.png">
+                            تهران
+                        </div>
+                        <div class="extra">
+                            <img src="calendar.png">
+                            34 سال
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="activerooms" id="rooms">
+                <div class="room activeroom" id="rspublic" onclick="changeroom('public')">
+                    <div class="content">
+                        <div class="profileimg">
+                            <img src="public.png"/>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+<!-- open up menus -->
+<!-- profile manager -->
+<div class="profile-manager-container" id="profile-manager-container">
+    <div class="profile-manager-container1">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-3"></div>
+                <form id="profilesetting">
+                    <div class="col-sm-6 profile-manager">
+                        <img src="user-profile.png"/>
+                        <h1>مدیریت پروفایل</h1>
+                        <hr>
+                        <div class="avatar">
+                            <a href="/profileimg"> <img id="profileimg"/></a>
+                        </div>
+                            <div class="top-left-input">
+                                <label for="name">نام<span>(کاربران دیگر می بینند)</span></label>
+                                <input type="text" name="name" id="name">
+                                <div class="profilewarn" id="namewarn" style="width: 100%!important;"></div>
+                                <label for="username">نام کاربری<span>(بدون تغییر باقی می ماند)</span></label>
+                                <input type="text" name="username" id="username" readonly>
+                            </div><hr>
+                            <div class="bottom">
+                                <div>
+                                    <label for="bio">توضیحی مختصر در مورد خودتون<span id="biocounter" style="font-size: 16px;color: #0b2a47;"></span></label>
+                                    <textarea id="bio" name="bio"></textarea>
+                                </div>
+                                <div>
+                                    <label for="asl">متن « اصل »<span id="aslcounter" style="font-size: 16px;color: #0b2a47;"></span></label>
+                                    <textarea name="asl" id="asl"></textarea>
+                                </div>
+                                <div style="width: 100%">
+                                    <div class="profilewarn" id="biowarn"></div>
+                                    <div class="profilewarn" id="aslwarn"></div>
+                                </div>
+                                <div>
+                                    <label for="state">استان</label>
+                                    <select id="state" name="state" style="width: 100%">
+                                        <option value="تهران">تهران</option>
+                                        <option value="آذربایجان شرقی">آذربایجان شرقی</option>
+                                        <option value="آذربایجان غربی">آذربایجان غربی</option>
+                                        <option value="اردبیل">اردبیل</option>
+                                        <option value="اصفهان">اصفهان</option>
+                                        <option value="البرز">البرز</option>
+                                        <option value="ایلام">ایلام</option>
+                                        <option value="بوشهر">بوشهر</option>
+                                        <option value="چهارمحال و بختیاری">چهارمحال و بختیاری</option>
+                                        <option value="خراسان جنوبی">خراسان جنوبی</option>
+                                        <option value="خراسان رضوی ">خراسان رضوی</option>
+                                        <option value="خراسان شمالی">خراسان شمالی</option>
+                                        <option value="خوزستان">خوزستان</option>
+                                        <option value="زنجان">زنجان</option>
+                                        <option value="سمنان">سمنان</option>
+                                        <option value="سیستان و بلوچستان">سیستان و بلوچستان</option>
+                                        <option value="فارس">فارس</option>
+                                        <option value="قزوین">قزوین</option>
+                                        <option value="قم">قم</option>
+                                        <option value="کردستان">کردستان</option>
+                                        <option value="کرمان">کرمان</option>
+                                        <option value="کرمانشاه">کرمانشاه</option>
+                                        <option value="کهگیلویه و بویراحمد">کهگیلویه و بویراحمد</option>
+                                        <option value="گلستان">گلستان</option>
+                                        <option value="گیلان">گیلان</option>
+                                        <option value="لرستان">لرستان</option>
+                                        <option value="مازندران">مازندران</option>
+                                        <option value="مرکزی">مرکزی</option>
+                                        <option value="هرمزگان">هرمزگان</option>
+                                        <option value="همدان">همدان</option>
+                                        <option value="یزد">یزد</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label for="single">وضعیت تاهل</label>
+                                    <div class="gendercontainer">
+                                        <div>
+                                            <input checked type="radio" name="single" id="single" value="1">
+                                            <label for="single">مجرد</label>
+                                        </div>
+                                        <div>
+                                            <input type="radio" name="single" id="couple" value="2">
+                                            <label for="couple">متاهل</label>
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <div>
+                                    <label for="age">سن</label>
+                                    <input type="text" name="age" id="age" style="width: 50px"><br>
+                                    <div class="profilewarn" id="agewarn" style="width: 100%!important;"></div>
+                                </div>
+                                <hr>
+                                <div style="width: 100%">
+                                    <div class="save" id="profilesave" onclick="profilesend()">ذخیره</div>
+                                    <div class="boxcancel" id="profilecancel">بیخیال</div>
+                                </div>
+                            </div>
+                    </div>
+                </form>
+                <div class="col-sm-3"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="profile-manager-container" id="security-container">
+    <div class="profile-manager-container1">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-3"></div>
+                <form id="passwordsetting">
+                    <div class="col-sm-6 profile-manager">
+                        <img src="security.png"/>
+                        <h1>امنیت</h1>
+                        <hr>
+                        <div class="bottom">
+                            <div class="input-container-setting">
+                                <label for="password">رمز جدید</label>
+                                <input id="password" name="password" type="password">
+                                <div class="profilewarn" id="passwordwarn" style="width: 100%!important;"></div>
+                            </div>
+                            <div class="input-container-setting">
+                                <label for="repassword">تکرار رمز</label>
+                                <input type="password" name="repassword" id="repassword">
+                                <div class="profilewarn" id="repasswordwarn" style="width: 100%!important;"></div>
+                            </div>
+                            <hr>
+                            <div style="width: 100%">
+                                <div class="save" id="profilesave" onclick="passwordsend()">ذخیره</div>
+                                <div class="boxcancel" id="profilecancel">بیخیال</div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                <div class="col-sm-3"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="alertcontainer">
+    <div class="alert">
+        <div class="alert-content">
+            توجه کنید که از این پس می توانید در بخش تنظیمات ظاهر
+            صفحه ی خود را بهبود ببخشید.
+        </div>
+        <div class="alert-but">باشه!</div>
+    </div>
+</div>
+<%
+  if(rank === 0){%>
+
+    <script src="ui.js"></script>
+    <script src="chat.js"></script>
+<%} else if(rank === 1){%>
+
+    <script src="ui1.js"></script>
+    <script src="chat1.js"></script>
+<%
+}%>
+<script src="settings.js"></script>
+</body>
+</html>

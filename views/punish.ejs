@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>تصویر پروفایل</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="bootstrap/jquery.js"></script>
+    <link rel="stylesheet" href="plugin/bootstrap.min.css">
+    <script src="plugin/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="style/signupimg.css">
+    <link rel="stylesheet" href="style/home.css">
+    <style>
+        .pointer
+        {
+            font-size: 16px;
+            color: #0185d0;
+            vertical-align: top;
+            margin-right: 10px;
+        }
+        .num
+        {
+            font-size: 54px;
+            color: #0e0e0e;
+        }
+        .msg
+        {
+            font-size:28px;
+            color: #0e0e0e;
+        }
+    </style>
+</head>
+<body>
+<div class="container-fluid">
+    <%- include('./topbar') %>
+    <div class="row" style="direction:rtl;margin-top: 100px;font-size:20px;text-align: center">
+        <div id="clock"></div>
+        <div class="msg">تا باز شدن دوباره حساب کاربری شما ... </div>
+    </div>
+</div>
+<script>
+    completetime = {h:0,m:0,s:0}
+    timeu = <%= time; %>;
+    if(timeu === -1)
+    {
+        $('.msg').text('ناظر حساب شما را مسدود و رسیدگی آن را به ادمین سپرد')
+    }
+    else {
+        timeu /= 1000;
+        timeu = Math.floor(timeu);
+        if (timeu < 60) {
+            completetime.s = timeu;
+        }
+        else {
+
+            nroundtime = timeu
+            timeu /= 60;
+            timeu = Math.floor(timeu);
+            if (timeu < 60) {
+                num = nroundtime - timeu * 60;
+                completetime.s = num;
+                completetime.m = timeu;
+            }
+            else {
+                timeuh = timeu / 60;
+                timeuh = Math.floor(timeuh);
+                completetime.s = nroundtime - timeu * 60;
+                completetime.m = timeu - timeuh * 60;
+                completetime.h = timeuh;
+            }
+        }
+
+        function clockprinter(h, m, s) {
+            let hour, min, sec = '';
+            hour = '<span class="num">' + h + '</span><span class="pointer">ساعت</span>'
+            min = '<span class="num">' + m + '</span><span class="pointer">دقیقه</span>'
+            sec = '<span class="num">' + s + '</span><span class="pointer">ثانیه</span>'
+            $('#clock').html(hour + min + sec)
+        }
+
+        function clock() {
+            completetime.s--;
+            if (completetime.s < 0) {
+                if (completetime.m === 0) {
+                    if (completetime.h === 0) {
+                        window.location = 'login';
+                    }
+                    else {
+                        completetime.s = 59;
+                        completetime.m = 59;
+                        completetime.h--;
+                        clockprinter(completetime.h, completetime.m, completetime.s);
+                    }
+                }
+                else {
+                    completetime.s = 59;
+                    completetime.m--;
+                    clockprinter(completetime.h, completetime.m, completetime.s);
+                }
+            }
+            else {
+                clockprinter(completetime.h, completetime.m, completetime.s);
+            }
+        }
+
+        clockrun = setInterval(clock, 1000);
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>تصویر پروفایل</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="bootstrap/jquery.js"></script>
+    <link rel="stylesheet" href="plugin/bootstrap.min.css">
+    <script src="plugin/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="style/signupimg.css">
+    <link rel="stylesheet" href="style/home.css">
+    <style>
+        .img-container
+        {
+            width: 256px;
+            height: 256px;
+            overflow: hidden;
+            border: 1px solid crimson;
+            position: relative;
+            display: inline-block;
+            border-radius: 50%;
+        }
+        .img-container img
+        {
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        button
+        {
+            width: 50%;
+            font-size: 16px;
+            background: #153e84;
+            padding: 10px 20px;
+            color: white;
+            margin: 10px 0;
+            display: inline-block;
+            margin-left: -4px;
+            border: 0;
+            cursor: pointer;
+        }
+        button img
+        {
+            width: 40px;
+        }
+        .msg
+        {
+            font-size: 22px;
+            color: #0e0e0e;
+        }
+    </style>
+    <script>
+        function savepos() {
+            if(dir === 'w')
+            {
+                pos = $('#pimg').css('left');
+                num=pos.indexOf('px');
+                pos=pos.substring(0,num);
+                pos = Math.floor(pos)
+                pos = pos*-1;
+                pos = parseInt(pos,10)
+            }
+            if(dir === 'h')
+            {
+                pos = $('#pimg').css('top');
+                num=pos.indexOf('px');
+                pos=pos.substring(0,num);
+                pos = Math.floor(pos)
+                pos = pos*-1;
+                pos = parseInt(pos,10)
+            }
+            $.post('userprofileimgsetting',{dir:dir,pos:pos},function (data) {
+                $('#msgbox').empty().html('<div class="msg">تمام شد ! در حال انتقال به چت روم</div><div>اگه بصورت خودکار منتقل نشدید <a href="login">کلیک کنید</a> </div>')
+                window.location = 'login';
+            })
+        }
+    </script>
+</head>
+<body>
+    <div class="container-fluid">
+        <%- include('./topbar') %>
+        <div class="row" style="text-align: center;padding-top: 100px;">
+            <div class="col-sm-4"></div>
+            <div class="col-sm-4" id="msgbox">
+                <div class="img-container">
+                    <img src="userimg/<%- imgsrc %>" id="pimg">
+                </div><br>
+                <button id="l"><img src="left.png"></button>
+                <button id="r"><img src="right.png"> </button>
+                <button id="t"><img src="up.png"></button>
+                <button id="b"><img src="bottom.png"></button>
+                <button style="width: auto" onclick="savepos()">ذخیره</button>
+            </div>
+            <div class="col-sm-4"></div>
+        </div>
+    </div>
+<script>
+    const r=$("#r"),l=$("#l"),t=$("#t"),b=$("#b")
+    var a=0;
+    img=$("#pimg");
+    w=$("#pimg").width();
+    h=$("#pimg").height();
+    dir = 'w';
+    if(w>h){a=1} else{a=2}
+
+    if(a==1)
+    {
+        img.height(100+"%");
+        t.remove(),b.remove();
+    }
+    else
+    {
+        img.width(100+"%");
+        r.remove(),l.remove();
+        dir = 'h';
+    }
+    r.click(function () {
+        const imgwidth = parseInt(img.width());
+        img.css('left',"-=10");
+        txt=img.css('right');
+        pos=txt.indexOf('px');
+        txt=txt.substring(0,pos);
+        if(txt>0)
+        {
+            let left= imgwidth-256;
+            left*=-1;
+            img.css('left',left);
+        }
+        else
+        {
+            img.css('left',"-=10");
+        }
+    });
+    l.click(function () {
+        img.css('left',"+=10");
+        txt=img.css('left');
+        pos=txt.indexOf('px');
+        txt=txt.substring(0,pos);
+        if(txt>0)
+        {
+            img.css('left',"0");
+        }
+        else
+        {
+            img.css('left',"+=10");
+        }
+    });
+    t.click(function () {
+        let imgheight = parseInt(img.height());
+        img.css('top',"-=10");
+        pos = img.css('bottom');
+        pos = parseInt(pos,10);
+        if(pos>0)
+        {
+            let top = imgheight-256;
+            top*=-1;
+            img.css('top',top);
+        }
+
+    });
+    b.click(function () {
+        img.css('top',"+=10");
+        pos = img.css('top');
+        pos = parseInt(pos,10)
+        if(pos>0)
+        {
+            img.css('top','0')
+        }
+    });
+    txt=img.css('right');
+    pos=txt.indexOf('px');
+    txt=txt.substring(0,pos);
+    console.log(txt,pos);
+</script>
+</body>
+</html>
